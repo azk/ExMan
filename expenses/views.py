@@ -19,12 +19,28 @@ class HomeView(LoginRequiredMixin, ListView):
 class AddView(LoginRequiredMixin, CreateView):
     model = models.Expense
     fields = (
+        'expense_list',
         'timestamp',
         'amount',
         'details',
     )
     success_url = reverse_lazy("home")
 
+    def get_queryset(self):
+        return super().get_queryset().filter(expense_list__user=self.request.user)
+
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
+class AddListView(LoginRequiredMixin,CreateView):
+    model = models.ExpenseList
+    fields = (
+        'name',
+    )
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    success_url = reverse_lazy("home")
