@@ -33,6 +33,13 @@ class AddView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+    def get_form(self, form_class=None):
+        form =  super().get_form(form_class)
+        form.fields['expense_list'].queryset = models.ExpenseList.objects.filter(user=self.request.user)
+
+        return form
+
+
 class AddListView(LoginRequiredMixin,CreateView):
     model = models.ExpenseList
     fields = (
